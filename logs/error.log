@@ -1,0 +1,6 @@
+[error]: 03-16-2021 03:25:25: Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively
+[error]: 03-16-2021 03:25:25: End latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively
+[error]: 03-16-2021 03:25:25: Rider name must be a non empty string
+[error]: 03-16-2021 03:25:25: Driver name must be a non empty string
+[error]: 03-16-2021 03:25:25: Driver vehicle must be a non empty string
+[error]: 03-16-2021 03:25:25: Error encountered getting list of rides some fake error
