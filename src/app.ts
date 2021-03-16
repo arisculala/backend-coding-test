@@ -91,6 +91,7 @@ export default (db: sqlite3.Database) => {
     db.run('INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)', values, function (err) {
       if (err) {
         logger.error('Error encountered inserting ride details', err)
+        res.status(constants.HTTP_ERROR_CODE_500)
         return res.send({
           error_code: constants.SERVER_ERROR,
           message: constants.UNKNOWN_ERROR
@@ -100,6 +101,7 @@ export default (db: sqlite3.Database) => {
       db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID, function (err, rows) {
         if (err) {
           logger.error('Error encountered getting the newly created ride', err)
+          res.status(constants.HTTP_ERROR_CODE_500)
           return res.send({
             error_code: constants.SERVER_ERROR,
             message: constants.UNKNOWN_ERROR
@@ -128,7 +130,7 @@ export default (db: sqlite3.Database) => {
         res.status(constants.HTTP_ERROR_CODE_404)
         return res.send({
           error_code: constants.RIDES_NOT_FOUND_ERROR,
-          message: 'Could not find any rides'
+          message: constants.COULD_NOT_FIND_ANY_RIDES
         })
       }
 
@@ -144,7 +146,7 @@ export default (db: sqlite3.Database) => {
         res.status(constants.HTTP_ERROR_CODE_500)
         return res.send({
           error_code: constants.SERVER_ERROR,
-          message: 'Unknown error'
+          message: constants.UNKNOWN_ERROR
         })
       }
 
