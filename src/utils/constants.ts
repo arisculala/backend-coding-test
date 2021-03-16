@@ -13,6 +13,7 @@ const constants = {
   DRIVER_VEHICLE_EMPTY_ERROR_MSG: 'Driver vehicle must be a non empty string',
   RIDES_NOT_FOUND_ERROR: 'RIDES_NOT_FOUND_ERROR',
   RIDE_NOT_FOUND_ERROR: 'RIDE_NOT_FOUND_ERROR',
-  RIDE_ID_NOT_FOUND_ERROR: 'Could not find any rides with the specified id'
+  RIDE_ID_NOT_FOUND_ERROR: 'Could not find any rides with the specified id',
+  COULD_NOT_FIND_ANY_RIDES: 'Could not find any rides'
 }
 export default Object.freeze(constants)

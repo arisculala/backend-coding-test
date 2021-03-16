@@ -24,8 +24,16 @@ describe('API tests', () => {
 
   // test [get: /health]
   describe('GET /health', async () => {
-    it('should return health', () => {
+    it('should return health status code 200', () => {
       request(app).get('/health').expect('Content-Type', /text/).expect(200)
+    })
+
+    it('should return health status code 200 and response string Healthy', async () => {
+      const response = await request(app)
+        .get('/health')
+        .expect('Content-Type', /text/).expect(200)
+
+      expect(response.text).to.equal('Healthy')
     })
   })
 
@@ -177,33 +185,51 @@ describe('API tests', () => {
         'Driver vehicle must be a non empty string'
       )
     })
-  })
 
-  // test [get: /rides]
-  describe('GET /rides', () => {
-    it('should return rides', async () => {
-      const response = await request(app).get('/rides').expect(200)
-
-      const rides = response.body
-
-      expect(rides).to.be.an('array')
-      expect(rides[0].rideID).to.equal(1)
-    })
-
-    it('should throw error 500 if there is something wrong with the database connection', async () => {
+    it('should throw error 500 if there is something wrong with the database when doing insert of new ride', async () => {
       const dbAllStub = sinon
-        .stub(db, 'all')
-        .yields(new Error('some fake error'))
+        .stub(db, 'run')
+        .yields(new Error('Database run method insert fake error'))
 
       // expect the api call to return error 500
-      await request(app).get('/rides').expect(500)
+      await request(app)
+        .post('/rides')
+        .send({
+          start_lat: 1.29027,
+          start_long: 103.851959,
+          end_lat: 1.29027,
+          end_long: 103.851959,
+          rider_name: 'Jhon Doe',
+          driver_name: 'Aris Culala',
+          driver_vehicle: 'Honda CRV - SG1234567'
+        }).expect(500)
+      dbAllStub.restore()
+    })
+
+    it('should throw error 500 if there is something wrong with the database when retrieving the newly created ride details after the insert', async () => {
+      const dbAllStub = sinon
+        .stub(db, 'all')
+        .yields(new Error('Database all method insert fake error'))
+
+      // expect the api call to return error 500
+      await request(app)
+        .post('/rides')
+        .send({
+          start_lat: 1.29027,
+          start_long: 103.851959,
+          end_lat: 1.29027,
+          end_long: 103.851959,
+          rider_name: 'Jhon Doe',
+          driver_name: 'Aris Culala',
+          driver_vehicle: 'Honda CRV - SG1234567'
+        }).expect(500)
       dbAllStub.restore()
     })
   })
 
   // test [get: /rides/:id]
   describe('GET /rides/:id', () => {
-    it('should return rides', async () => {
+    it('should return specified id ride details', async () => {
       const response = await request(app).get('/rides/1').expect(200)
 
       const rides = response.body
@@ -211,5 +237,76 @@ describe('API tests', () => {
       expect(rides).to.be.an('array')
       expect(rides[0].rideID).to.equal(1)
     })
+
+    it('should return 404 if the ride id specified do not exists', async () => {
+      const response = await request(app)
+        .get('/rides/43')
+        .expect(404)
+
+      const errorResponse = response.body
+
+      expect(errorResponse).to.be.an('object')
+      expect(errorResponse.error_code).to.equal('RIDE_NOT_FOUND_ERROR')
+      expect(errorResponse.message).to.equal(
+        'Could not find any rides with the specified id [43]'
+      )
+    })
+
+    it('should throw error 500 if there is something wrong with the database when retrieving the specified ride id details', async () => {
+      const dbAllStub = sinon
+        .stub(db, 'all')
+        .yields(new Error('Database all method retrieve fake error'))
+
+      // expect the api call to return error 500
+      const response = await request(app)
+        .get('/rides/1')
+        .expect(500)
+
+      const errorResponse = response.body
+
+      expect(errorResponse).to.be.an('object')
+      expect(errorResponse.error_code).to.equal('SERVER_ERROR')
+      expect(errorResponse.message).to.equal('Unknown error')
+      dbAllStub.restore()
+    })
+
+    // test [get: /rides]
+    describe('GET /rides', () => {
+      it('should return list of rides', async () => {
+        const response = await request(app).get('/rides').expect(200)
+
+        const rides = response.body
+
+        expect(rides).to.be.an('array')
+        expect(rides[0].rideID).to.equal(1)
+      })
+
+      it('should throw error 500 if there is something wrong with the database when retrieving list of rides', async () => {
+        const dbAllStub = sinon
+          .stub(db, 'all')
+          .yields(new Error('Database all method retrieve fake error'))
+
+        // expect the api call to return error 500
+        await request(app).get('/rides').expect(500)
+        dbAllStub.restore()
+      })
+
+      it('should return 404 if no rides found', async () => {
+        // Delete data in Rides table
+        db.all('DELETE FROM Rides', function (err, rows) {});
+
+        // expect the api call to return error 404
+        const response = await request(app)
+          .get('/rides')
+          .expect(404)
+
+        const errorResponse = response.body
+
+        expect(errorResponse).to.be.an('object')
+        expect(errorResponse.error_code).to.equal('RIDES_NOT_FOUND_ERROR')
+        expect(errorResponse.message).to.equal('Could not find any rides')
+      })
+    })
+
   })
 })
