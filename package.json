@@ -10,6 +10,7 @@
     "start": "nodemon",
     "build": "tsc",
     "test": "DEBUG=true nyc --reporter=lcov --reporter=text mocha tests --exit --inspect=0.0.0.0:9229 --timeout 120000 -r ts-node/register tests/*.test.ts",
+    "test:ci": "NODE_ENV=test mocha tests/*.test.ts",
     "lint": "eslint --ext .ts ./src",
     "prettier": "prettier --config .prettierrc.json --write src/**/*.ts",
     "pretty-quick": "pretty-quick --staged"
