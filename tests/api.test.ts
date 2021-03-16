@@ -39,7 +39,7 @@ describe('API tests', () => {
 
   // test [post: /rides]
   describe('POST /rides', () => {
-    it('should return rides', async () => {
+    it('should return newly created ride', async () => {
       const response = await request(app)
         .post('/rides')
         .send({
@@ -59,6 +59,29 @@ describe('API tests', () => {
 
       expect(rides).to.be.an('array')
       expect(rides[0].rideID).to.equal(1)
+    })
+
+    it('should return newly created rides for pagination testing', async () => {
+      for (var i = 2; i <= 58; i++) {
+        const response = await request(app)
+          .post('/rides')
+          .send({
+            start_lat: 1.29027,
+            start_long: 103.851959,
+            end_lat: 1.29027,
+            end_long: 103.851959,
+            rider_name: `Jhon Doe ${i}`,
+            driver_name: 'Aris Culala',
+            driver_vehicle: 'Honda CRV - SG1234567'
+          })
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+
+        const rides = response.body
+
+        expect(rides).to.be.an('array')
+      }
     })
 
     it('should return error 500 if startLatitude < -90 or startLatitude > 90 and startLongitude < -180 or startLongitude > 180', async () => {
@@ -240,7 +263,7 @@ describe('API tests', () => {
 
     it('should return 404 if the ride id specified do not exists', async () => {
       const response = await request(app)
-        .get('/rides/43')
+        .get('/rides/287')
         .expect(404)
 
       const errorResponse = response.body
@@ -248,7 +271,7 @@ describe('API tests', () => {
       expect(errorResponse).to.be.an('object')
       expect(errorResponse.error_code).to.equal('RIDE_NOT_FOUND_ERROR')
       expect(errorResponse.message).to.equal(
-        'Could not find any rides with the specified id [43]'
+        'Could not find any rides with the specified id [287]'
       )
     })
 
@@ -272,13 +295,78 @@ describe('API tests', () => {
 
     // test [get: /rides]
     describe('GET /rides', () => {
-      it('should return list of rides', async () => {
-        const response = await request(app).get('/rides').expect(200)
+      it('should return list of rides using the default value of query params (limit=10, offset=0, column=rideID, sort=DESC)', async () => {
+        var paginationQueryParams = {};
 
+        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
         const rides = response.body
+        const rows = rides.rows;
 
-        expect(rides).to.be.an('array')
-        expect(rides[0].rideID).to.equal(1)
+        expect(rows).to.be.an('array')
+        expect(rows[0].rideID).to.equal(59)
+      })
+
+      it('should return all available list of rides total of 59, rideID sorted in Descending order', async () => {
+        var paginationQueryParams = { limit: 100, offset: 0, column: 'rideID', sort: 'DESC' };
+
+        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+        const rides = response.body
+        const rows = rides.rows;
+
+        expect(rows).to.be.an('array')
+        expect(rows.length).to.equal(59)
+        expect(rows[0].rideID).to.equal(59)
+        expect(rows[58].rideID).to.equal(1)
+      })
+
+      it('should return the first 5 rides with rideID sorted in Ascending order', async () => {
+        var paginationQueryParams = { limit: 5, offset: 0, column: 'rideID', sort: 'ASC' };
+
+        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+        const rides = response.body
+        const rows = rides.rows;
+
+        expect(rows).to.be.an('array')
+        expect(rows.length).to.equal(5)
+        expect(rows[0].rideID).to.equal(1)
+        expect(rows[1].rideID).to.equal(2)
+        expect(rows[2].rideID).to.equal(3)
+        expect(rows[3].rideID).to.equal(4)
+        expect(rows[4].rideID).to.equal(5)
+      })
+
+      it('should return list of 6 rides starting from rideID 11 to 16 since rideID is sorted in Ascending order', async () => {
+        var paginationQueryParams = { limit: 6, offset: 10, column: 'rideID', sort: 'ASC' };
+
+        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+        const rides = response.body
+        const rows = rides.rows;
+
+        expect(rows).to.be.an('array')
+        expect(rows.length).to.equal(6)
+        expect(rows[0].rideID).to.equal(11)
+        expect(rows[1].rideID).to.equal(12)
+        expect(rows[2].rideID).to.equal(13)
+        expect(rows[3].rideID).to.equal(14)
+        expect(rows[4].rideID).to.equal(15)
+        expect(rows[5].rideID).to.equal(16)
+      })
+
+      it('should return list of 6 rides starting from 49 to 44 since rideID is sorted in Descending order', async () => {
+        var paginationQueryParams = { limit: 6, offset: 10, column: 'rideID', sort: 'DESC' };
+
+        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+        const rides = response.body
+        const rows = rides.rows;
+
+        expect(rows).to.be.an('array')
+        expect(rows.length).to.equal(6)
+        expect(rows[0].rideID).to.equal(49)
+        expect(rows[1].rideID).to.equal(48)
+        expect(rows[2].rideID).to.equal(47)
+        expect(rows[3].rideID).to.equal(46)
+        expect(rows[4].rideID).to.equal(45)
+        expect(rows[5].rideID).to.equal(44)
       })
 
       it('should throw error 500 if there is something wrong with the database when retrieving list of rides', async () => {

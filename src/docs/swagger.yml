@@ -60,6 +60,27 @@ paths:
       - Rides
       summary: "Get all rides"
       description: "A list of rides."
+      parameters:
+        - in: query
+          name: limit
+          required: true
+          schema:
+            $ref: '#/components/schemas/limit'
+        - in: query
+          name: offset
+          required: true
+          schema:
+            $ref: '#/components/schemas/offset'
+        - in: query
+          name: column
+          required: true
+          schema:
+            $ref: '#/components/schemas/column'
+        - in: query
+          name: sort
+          required: true
+          schema:
+            $ref: '#/components/schemas/sort'
       responses:
         200:
           description: Rides were obtained.
@@ -156,6 +177,22 @@ components:
         format: date
         description: Date/Time a ride is created.
         example: 2021-11-03 14:32:00
+      limit:
+        type: integer
+        description: Query parameter for GET /rides API. Constrain the number of rides returned. (If not provided the default value is 10)
+        example: 10
+      offset:
+        type: integer
+        description: Query parameter for GET /rides API. Start index value records to be returned. (If not provided the default value is 0)
+        example: 0
+      column:
+        type: string
+        description: Query parameter for GET /rides API. Column name to be sort. Values (rideID; startLat; startLong; endLat; endLong; riderName; driverName; driverVehicle; created)
+        example: rideID
+      sort:
+        type: string
+        description: Query parameter for GET /rides API. Sort order of column. Values (ASC; DESC)
+        example: DESC
       NewRide:
         description: Input object when creating a ride.
         type: object

@@ -8,6 +8,8 @@ import cors from 'cors'
 
 import { json } from 'body-parser'
 
+import _ from 'lodash'
+
 // Winston logger
 import { transports as _transports, format as _format, createLogger } from 'winston'
 import sqlite3 from 'sqlite3'
@@ -115,9 +117,15 @@ export default (db: sqlite3.Database) => {
 
   app.get('/rides', (req, res) => {
     logger.info('Calling get: /rides')
-    db.all('SELECT * FROM Rides', function (err, rows) {
+
+    let limit = _.get(req.query, 'limit', 10)
+    let offset = _.get(req.query, 'offset', 0)
+    let column = _.get(req.query, 'column', 'rideID')
+    let sort = _.get(req.query, 'sort', 'DESC')
+
+    db.all(`SELECT count(*) as count FROM Rides ORDER BY ${column} ${sort}`, function (err, rows) {
       if (err) {
-        logger.error('Error encountered getting list of rides', err)
+        logger.error('Error encountered getting list of rides count', err)
         res.status(constants.HTTP_ERROR_CODE_500)
         return res.send({
           error_code: constants.SERVER_ERROR,
@@ -125,21 +133,42 @@ export default (db: sqlite3.Database) => {
         })
       }
 
-      if (rows.length === 0) {
-        logger.error('Could not find any rides')
-        res.status(constants.HTTP_ERROR_CODE_404)
-        return res.send({
-          error_code: constants.RIDES_NOT_FOUND_ERROR,
-          message: constants.COULD_NOT_FIND_ANY_RIDES
-        })
-      }
+      const count = rows[0].count
 
-      res.send(rows)
+      db.all(`SELECT * FROM Rides ORDER BY ${column} ${sort} limit ${limit} offset ${offset}`,
+        function (err, rows) {
+          if (err) {
+            logger.error('Error encountered getting list of rides', err)
+            res.status(constants.HTTP_ERROR_CODE_500)
+            return res.send({
+              error_code: constants.SERVER_ERROR,
+              message: constants.UNKNOWN_ERROR
+            })
+          }
+
+          if (rows.length === 0) {
+            logger.error(constants.COULD_NOT_FIND_ANY_RIDES)
+            res.status(constants.HTTP_ERROR_CODE_404)
+            return res.send({
+              error_code: constants.RIDES_NOT_FOUND_ERROR,
+              message: constants.COULD_NOT_FIND_ANY_RIDES
+            })
+          }
+
+          res.send({
+            total: count,
+            limit,
+            offset,
+            rows
+          })
+        }
+      )
     })
   })
 
   app.get('/rides/:id', (req, res) => {
     logger.info('Calling get: /ride/{id}')
+
     db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, function (err, rows) {
       if (err) {
         logger.error('Error encountered getting the specified ride id details', err)
