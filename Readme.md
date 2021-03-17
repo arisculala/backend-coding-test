@@ -99,6 +99,9 @@ Please implement the following tooling:
 
 7. For lint I setup local vscode ide to automatically do the lint fix of the code
 
+8. I have setup pre-push to do run all the test before allowing to push the commit changes to github.
+   This will ensure that all test cases must be working properly before committing the changes to github.
+
 ```
 
 ### Implement Pagination
