@@ -104,6 +104,7 @@ Please implement the following tooling:
 
 ```
 
+
 ### Implement Pagination
 
 Please implement pagination to retrieve pages of the resource `rides`.
@@ -113,6 +114,38 @@ Please implement pagination to retrieve pages of the resource `rides`.
     2. Tests
     3. Documentation
 2. Merge the pull request
+
+#### How to test
+```
+- I added limit, offset, column, sort parameters to make the pagination endpoint flexible
+
+- Installed lodash for query parameter validation and setting of default value
+
+1. Clone the remote repository backend-coding-test in your local machine (using the release tag pagination)
+   $ git clone https://github.com/arisculala/backend-coding-test.git --branch pagination
+
+2. Go inside the cloned backend-coding-test project
+   $ cd backend-coding-test
+
+3. Ensure node (>8.6 and <= 10) and npm are installed
+
+4. Run
+   $ npm install
+
+5. Run
+   $ npm test
+      (In the result, you will see additional test cases under GET /rides with pagination parameters)
+
+6. Run
+   $ npm run start
+
+7. Open in browser
+   http://localhost:8010/api/docs/
+      (You should be able to see the additional input query parameters in GET: /rides - The query parameters will be use for pagination purpose)
+      Under 'Schemas' of the swagger UI documentation,
+         you will be able to see the definition and usage of the additional query parameters (limit, offset, column and sort)
+```
+
 
 ### Refactoring
 
