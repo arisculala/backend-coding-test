@@ -86,23 +86,6 @@ describe('RidesService tests', () => {
       expect(rides[0].rideID).to.equal(21)
       expect(rides[9].rider_name).to.equal('Jhon Doe 12')
     })
-
-    // it('should throw error 500 if there is something wrong with the database when calling findAllPagination', async () => {
-    //   const dbAllStub = sinon
-    //     .stub(db, 'all')
-    //     .yields(new Error('Database all method retrieve fake error'))
-
-    //   // expect the api call to return error 500
-    //   const response = await ridesService.findAllPagination(requestDataPagination)
-    //   console.log('response::', response)
-    //   const errorResponse = response.body
-
-    //   expect(errorResponse).to.be.an('object')
-    //   expect(errorResponse.error_code).to.equal('SERVER_ERROR')
-    //   expect(errorResponse.error_code).to.equal('UNKNOWN_ERROR')
-
-    //   dbAllStub.restore()
-    // })
   })
 
   describe('findRideById', () => {

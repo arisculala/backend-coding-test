@@ -5,6 +5,7 @@ import { expect } from 'chai'
 import buildSchemas from '../../src/schemas'
 import RidesService from '../../src/services/rides-service';
 import RidesController from '../../src/controllers/rides-controller';
+import CustomError from '../../src/utils/custom-error';
 
 const sqlite3Ver = sqlite3.verbose()
 const db = new sqlite3Ver.Database(':memory:')
@@ -65,6 +66,37 @@ describe('RidesController tests', () => {
       expect(ridesWithPagination.rows).to.be.an('array')
       expect(ridesWithPagination.limit).to.equal(10)
       expect(ridesWithPagination.offset).to.equal(0)
+    })
+
+    it('should return 500 validation error when column parameter is not a valid value', async () => {
+      const requestData = {
+        limit: 10,
+        offset: 0,
+        column: 'Select * from users',
+        sort: 'DESC'
+      }
+
+      try {
+        await ridesController.getRidesWithPagination(requestData);
+        expect(true, "Promise should fail").eq(false)
+      } catch (e) {
+        expect(e.message).to.eq("Invalid column parameter");
+      }
+    })
+
+    it('should return 500 validation error when sort parameter is not a valid value', async () => {
+      const requestData = {
+        limit: 10,
+        offset: 0,
+        column: 'rideID',
+        sort: 'Select * from users'
+      }
+      try {
+        await ridesController.getRidesWithPagination(requestData);
+        expect(true, "Promise should fail").eq(false)
+      } catch (e) {
+        expect(e.message).to.eq("Invalid sort parameter");
+      }
     })
   })
 

@@ -83,7 +83,7 @@ class RideService {
             let sort = _.get(requestData, 'sort', 'DESC')
 
             return await new Promise((resolve, reject) => {
-                self.db.all(`SELECT * FROM Rides ORDER BY ${column} ${sort} limit ${limit} offset ${offset}`,
+                self.db.all(`SELECT * FROM Rides ORDER BY ${column} ${sort} limit ? offset ?`, [limit, offset],
                     function (err, rows) {
                     if (err || rows.length === 0) {
                         self.logger.error(constants.COULD_NOT_FIND_ANY_RIDES)
