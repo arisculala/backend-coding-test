@@ -161,6 +161,44 @@ Please implement the following refactors of the code:
     1. Code changes
     2. Tests
 
+#### How to test
+```
+- Convert callback to async/await (using Promise)
+-  Reduce complexity at top level control flow logic and move logic down and test independently
+   -  removed existing code from app.ts
+   -  created controller (rides-controller), service (rides-service), route (rides-route) and interface
+   -  renamed api.test.ts to rides-router-test.ts and moved to tests/routes directory
+   -  created rides-controller.test.ts for rides-controller.ts tests
+   -  created rides-service.test.ts for rides-service.ts tests
+
+1. Clone the remote repository backend-coding-test in your local machine (using the release tag refactoring)
+   $ git clone https://github.com/arisculala/backend-coding-test.git --branch refactoring
+
+2. Go inside the cloned backend-coding-test project
+   $ cd backend-coding-test
+
+3. Ensure node (>8.6 and <= 10) and npm are installed
+
+4. Run
+   $ npm install
+
+5. Run
+   $ npm run test
+      -  You should be able to see the nyc display of tests - Output percentage of tests coverage
+      -  Additional test cases where added to cover functional and imperative function
+         -  RidesController tests `rides-controller.test.ts`nto cover test cases for `rides-controller.ts`
+         -  API tests `rides-routes.test.ts` to cover test cases for `rides-router.ts`
+         -  RidesService tests `rides-service.test.ts` to cover test cases for `rides-service.ts`
+6. Run
+   $ npm run start
+
+7. Open in browser
+   http://localhost:8010/api/docs/
+      (You should be able to see the existing swagger documentation UI - wherein you can use it to test the API's)
+```
+
+
+
 ### Security
 
 Please implement the following security controls for your system:
