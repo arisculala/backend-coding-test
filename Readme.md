@@ -212,6 +212,36 @@ Please implement the following security controls for your system:
     1. Changes to the code
     2. Tests ensuring the vulnerability is addressed
 
+#### How to test
+```
+-  Implemented parameterized when doing sqlite3 query
+-  Implemented helmet to helps you secure your Express apps by setting various HTTP headers.
+
+1. Clone the remote repository backend-coding-test in your local machine (using the release tag security)
+   $ git clone https://github.com/arisculala/backend-coding-test.git --branch security
+
+2. Go inside the cloned backend-coding-test project
+   $ cd backend-coding-test
+
+3. Ensure node (>8.6 and <= 10) and npm are installed
+
+4. Run
+   $ npm install
+
+5. Run
+   $ npm run test
+      (Additional testing under SQL Injection in the output)
+      (You should be able to see the nyc display of tests - Output percentage of tests coverage)
+
+6. Run
+   $ npm run start
+
+7. Open in browser
+   http://localhost:8010/api/docs/
+      (You should be able to see the existing swagger documentation UI - wherein you can use it to test the API's)
+```
+
+
 ### Load Testing
 
 Please implement load testing to ensure your service can handle a high amount of traffic
