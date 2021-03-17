@@ -9,8 +9,8 @@
   "scripts": {
     "start": "nodemon",
     "build": "tsc",
-    "test": "DEBUG=true nyc --reporter=lcov --reporter=text mocha tests --exit --inspect=0.0.0.0:9229 --timeout 120000 -r ts-node/register tests/*.test.ts",
-    "test:ci": "NODE_ENV=test mocha tests/*.test.ts",
+    "test": "DEBUG=true nyc --reporter=lcov --reporter=text mocha tests --exit --inspect=0.0.0.0:9229 --timeout 120000 -r ts-node/register tests/**/*.test.ts",
+    "test:ci": "NODE_ENV=test mocha tests/**/*.test.ts",
     "lint": "eslint --ext .ts ./src",
     "prettier": "prettier --config .prettierrc.json --write src/**/*.ts",
     "pretty-quick": "pretty-quick --staged"
@@ -23,6 +23,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "es6-promisify": "^6.1.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "express": "^4.16.4",
