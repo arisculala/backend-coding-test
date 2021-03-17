@@ -1,0 +1,82 @@
+{
+    "config": {
+      "target": "http://localhost:8010",
+      "phases": [
+        {
+          "name": "Starting [backend-coding-test] API's load testing . . . . [100rps for 30s]",
+          "duration": 30,
+          "arrivalRate": 100
+        }
+      ]
+    },
+    "scenarios": [
+      {
+        "name": "Load Test GET: /health endpoint",
+        "flow": [
+          {
+            "get": {
+              "url": "/health"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Load Test POST: /rides endpoint",
+        "flow": [
+          {
+            "post": {
+              "url": "/rides",
+              "json": {
+                "start_lat": 1.29027,
+                "start_long": 103.851959,
+                "end_lat": 1.29027,
+                "end_long": 103.851959,
+                "rider_name": "Jhon Doe",
+                "driver_name": "Aris Culala",
+                "driver_vehicle": "Honda CRV - SG1234567"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Load Test GET: /rides endpoint (using default pagination values)",
+        "flow": [
+          {
+            "get": {
+              "url": "/rides"
+            }
+          }
+  
+        ]
+      },
+      {
+        "name": "Load Test GET: /rides endpoint (using given pagination values)",
+        "flow": [
+          {
+            "get": {
+              "url": "/rides",
+              "qs": {
+                "limit": 100000,
+                "offset": 0,
+                "column": "created",
+                "sort": "DESC"
+              }
+            }
+          }
+  
+        ]
+      },
+      {
+        "name": "Load Test GET: /rides/:id endpoint",
+        "flow": [
+          {
+            "get": {
+              "url": "/rides/1"
+            }
+          }
+  
+        ]
+      }
+    ]
+  }

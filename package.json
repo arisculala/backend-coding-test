@@ -13,7 +13,10 @@
     "test:ci": "NODE_ENV=test mocha tests/**/*.test.ts",
     "lint": "eslint --ext .ts ./src",
     "prettier": "prettier --config .prettierrc.json --write src/**/*.ts",
-    "pretty-quick": "pretty-quick --staged"
+    "pretty-quick": "pretty-quick --staged",
+    "test:load": "artillery run load-testing-artillery.json",
+    "start:forever": "forever start -v -c ts-node src/index.ts",
+    "stop:forever": "forever stop -v -c ts-node src/index.ts"
   },
   "keywords": [
     "Xendit"
