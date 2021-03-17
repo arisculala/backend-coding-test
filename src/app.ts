@@ -1,6 +1,5 @@
 'use strict'
 
-import constants from './utils/constants'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -8,8 +7,12 @@ import _ from 'lodash'
 import rideRoutes from './routes/rides-router'
 import { transports as _transports, format as _format, createLogger } from 'winston'
 import sqlite3 from 'sqlite3'
+import helmet from "helmet"
 
 const app = express()
+
+// Use helmet - Helmet helps you secure your Express apps by setting various HTTP headers
+app.use(helmet())
 
 // Use cors
 app.use(cors())

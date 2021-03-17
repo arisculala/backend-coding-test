@@ -396,4 +396,31 @@ describe('API tests', () => {
     })
   })
 
+  // test [get: /rides]
+  describe('SQL Injection Tests', () => {
+    it('[Call GET: /rides] should return validation error 500 when parameter column value try to insert sql injection value', async () => {
+      var paginationQueryParams = { limit: 100, offset: 0, column: 'Select * from USERS', sort: 'DESC' };
+
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(500)
+
+      const errorResponse = response.body
+
+      expect(errorResponse).to.be.an('object')
+      expect(errorResponse.error_code).to.equal('VALIDATION_ERROR')
+      expect(errorResponse.message).to.equal('Invalid column parameter')
+    })
+
+    it('[Call GET: /rides] should return validation error 500 when parameter sort value try to insert sql injection value', async () => {
+      var paginationQueryParams = { limit: 100, offset: 0, column: 'rideID', sort: 'Select * from USERS' };
+
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(500)
+
+      const errorResponse = response.body
+
+      expect(errorResponse).to.be.an('object')
+      expect(errorResponse.error_code).to.equal('VALIDATION_ERROR')
+      expect(errorResponse.message).to.equal('Invalid sort parameter')
+    })
+  })
+
 })

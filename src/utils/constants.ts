@@ -14,6 +14,9 @@ const constants = {
   RIDES_NOT_FOUND_ERROR: 'RIDES_NOT_FOUND_ERROR',
   RIDE_NOT_FOUND_ERROR: 'RIDE_NOT_FOUND_ERROR',
   RIDE_ID_NOT_FOUND_ERROR: 'Could not find any rides with the specified id',
-  COULD_NOT_FIND_ANY_RIDES: 'Could not find any rides'
+  COULD_NOT_FIND_ANY_RIDES: 'Could not find any rides',
+  INVALID_COLUMN_PARAMETER: 'Invalid column parameter',
+  INVALID_SORT_PARAMETER: 'Invalid sort parameter'
 }
+
 export default Object.freeze(constants)
