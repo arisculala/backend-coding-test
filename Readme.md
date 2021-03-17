@@ -74,6 +74,33 @@ Please implement the following tooling:
 5. **[BONUS]** Add integration to CI such as Travis or Circle
 6. **[BONUS]** Add Typescript support
 
+#### How to test
+```
+1. Clone the remote repository backend-coding-test in your local machine (using the release tag tooling)
+   $ git clone https://github.com/arisculala/backend-coding-test.git --branch tooling
+
+2. Go inside the cloned backend-coding-test project
+   $ cd backend-coding-test
+
+3. Ensure node (>8.6 and <= 10) and npm are installed
+
+4. Run
+   $ npm install
+
+5. To test if nyc is setup
+   $ npm run test
+      (This will display the number of code coverage percentage)
+      For nyc code coverage, after you execute the command above, a directory (coverage) is created
+         browse on the created directory and open the file index.html (converage -> lcov-report -> src -> index.html)
+
+6. To test logger (I have setup winston as the logger)
+   $ npm run start
+      a directory name `logs` will be created inside the main project folder, two log file is also created as I setup the log severity error (error.log) and combine log info (info.log)
+
+7. For lint I setup local vscode ide to automatically do the lint fix of the code
+
+```
+
 ### Implement Pagination
 
 Please implement pagination to retrieve pages of the resource `rides`.
