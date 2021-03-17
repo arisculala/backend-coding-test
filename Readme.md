@@ -31,6 +31,24 @@ Please deliver documentation of the server that clearly explains the goals of th
 1. A pull request against `master` of your fork with a clear description of the change and purpose and merge it
 3. **[BONUS]** Create an easy way to deploy and view the documentation in a web format and include instructions to do so
 
+#### How to test
+1. Clone the remote repository backend-coding-test in your local machine (using the release tag documentation)
+   $ git clone https://github.com/arisculala/backend-coding-test.git --branch documentation
+
+2. Go inside the cloned backend-coding-test project
+   $ cd backend-coding-test
+
+3. Ensure node (>8.6 and <= 10) and npm are installed
+
+4. Run
+   $ npm install
+
+5. Run
+   $ npm run start
+
+6. Open in browser http://localhost:8010/api/docs/ to view the swagger api documentation
+
+
 ### Implement Tooling
 
 Please implement the following tooling:
