@@ -32,6 +32,7 @@ Please deliver documentation of the server that clearly explains the goals of th
 3. **[BONUS]** Create an easy way to deploy and view the documentation in a web format and include instructions to do so
 
 #### How to test
+```
 1. Clone the remote repository backend-coding-test in your local machine (using the release tag documentation)
    $ git clone https://github.com/arisculala/backend-coding-test.git --branch documentation
 
@@ -47,6 +48,8 @@ Please deliver documentation of the server that clearly explains the goals of th
    $ npm run start
 
 6. Open in browser http://localhost:8010/api/docs/ to view the swagger api documentation
+
+```
 
 
 ### Implement Tooling
