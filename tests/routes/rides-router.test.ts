@@ -1,12 +1,12 @@
 'use strict'
 
 import request from 'supertest'
-import buildSchemas from '../src/schemas'
+import buildSchemas from '../../src/schemas'
 import sqlite3 from 'sqlite3'
 import sinon from 'sinon'
 
 import { Express } from 'express-serve-static-core'
-import _app from '../src/app'
+import _app from '../../src/app'
 import { expect } from 'chai'
 
 const sqlite3Ver = sqlite3.verbose()
@@ -261,17 +261,17 @@ describe('API tests', () => {
       expect(rides[0].rideID).to.equal(1)
     })
 
-    it('should return 404 if the ride id specified do not exists', async () => {
+    it('should return 500 if the ride id specified do not exists', async () => {
       const response = await request(app)
         .get('/rides/287')
-        .expect(404)
+        .expect(500)
 
       const errorResponse = response.body
 
       expect(errorResponse).to.be.an('object')
       expect(errorResponse.error_code).to.equal('RIDE_NOT_FOUND_ERROR')
       expect(errorResponse.message).to.equal(
-        'Could not find any rides with the specified id [287]'
+        'Could not find any rides with the specified id'
       )
     })
 
@@ -292,109 +292,108 @@ describe('API tests', () => {
       expect(errorResponse.message).to.equal('Unknown error')
       dbAllStub.restore()
     })
+  })
 
-    // test [get: /rides]
-    describe('GET /rides', () => {
-      it('should return list of rides using the default value of query params (limit=10, offset=0, column=rideID, sort=DESC)', async () => {
-        var paginationQueryParams = {};
+  // test [get: /rides]
+  describe('GET /rides', () => {
+    it('should return list of rides using the default value of query params (limit=10, offset=0, column=rideID, sort=DESC)', async () => {
+      var paginationQueryParams = {};
 
-        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
-        const rides = response.body
-        const rows = rides.rows;
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+      const rides = response.body
+      const rows = rides.rows;
 
-        expect(rows).to.be.an('array')
-        expect(rows[0].rideID).to.equal(59)
-      })
-
-      it('should return all available list of rides total of 59, rideID sorted in Descending order', async () => {
-        var paginationQueryParams = { limit: 100, offset: 0, column: 'rideID', sort: 'DESC' };
-
-        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
-        const rides = response.body
-        const rows = rides.rows;
-
-        expect(rows).to.be.an('array')
-        expect(rows.length).to.equal(59)
-        expect(rows[0].rideID).to.equal(59)
-        expect(rows[58].rideID).to.equal(1)
-      })
-
-      it('should return the first 5 rides with rideID sorted in Ascending order', async () => {
-        var paginationQueryParams = { limit: 5, offset: 0, column: 'rideID', sort: 'ASC' };
-
-        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
-        const rides = response.body
-        const rows = rides.rows;
-
-        expect(rows).to.be.an('array')
-        expect(rows.length).to.equal(5)
-        expect(rows[0].rideID).to.equal(1)
-        expect(rows[1].rideID).to.equal(2)
-        expect(rows[2].rideID).to.equal(3)
-        expect(rows[3].rideID).to.equal(4)
-        expect(rows[4].rideID).to.equal(5)
-      })
-
-      it('should return list of 6 rides starting from rideID 11 to 16 since rideID is sorted in Ascending order', async () => {
-        var paginationQueryParams = { limit: 6, offset: 10, column: 'rideID', sort: 'ASC' };
-
-        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
-        const rides = response.body
-        const rows = rides.rows;
-
-        expect(rows).to.be.an('array')
-        expect(rows.length).to.equal(6)
-        expect(rows[0].rideID).to.equal(11)
-        expect(rows[1].rideID).to.equal(12)
-        expect(rows[2].rideID).to.equal(13)
-        expect(rows[3].rideID).to.equal(14)
-        expect(rows[4].rideID).to.equal(15)
-        expect(rows[5].rideID).to.equal(16)
-      })
-
-      it('should return list of 6 rides starting from 49 to 44 since rideID is sorted in Descending order', async () => {
-        var paginationQueryParams = { limit: 6, offset: 10, column: 'rideID', sort: 'DESC' };
-
-        const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
-        const rides = response.body
-        const rows = rides.rows;
-
-        expect(rows).to.be.an('array')
-        expect(rows.length).to.equal(6)
-        expect(rows[0].rideID).to.equal(49)
-        expect(rows[1].rideID).to.equal(48)
-        expect(rows[2].rideID).to.equal(47)
-        expect(rows[3].rideID).to.equal(46)
-        expect(rows[4].rideID).to.equal(45)
-        expect(rows[5].rideID).to.equal(44)
-      })
-
-      it('should throw error 500 if there is something wrong with the database when retrieving list of rides', async () => {
-        const dbAllStub = sinon
-          .stub(db, 'all')
-          .yields(new Error('Database all method retrieve fake error'))
-
-        // expect the api call to return error 500
-        await request(app).get('/rides').expect(500)
-        dbAllStub.restore()
-      })
-
-      it('should return 404 if no rides found', async () => {
-        // Delete data in Rides table
-        db.all('DELETE FROM Rides', function (err, rows) {});
-
-        // expect the api call to return error 404
-        const response = await request(app)
-          .get('/rides')
-          .expect(404)
-
-        const errorResponse = response.body
-
-        expect(errorResponse).to.be.an('object')
-        expect(errorResponse.error_code).to.equal('RIDES_NOT_FOUND_ERROR')
-        expect(errorResponse.message).to.equal('Could not find any rides')
-      })
+      expect(rows).to.be.an('array')
+      expect(rows[0].rideID).to.equal(59)
     })
 
+    it('should return all available list of rides total of 59, rideID sorted in Descending order', async () => {
+      var paginationQueryParams = { limit: 100, offset: 0, column: 'rideID', sort: 'DESC' };
+
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+      const rides = response.body
+      const rows = rides.rows;
+
+      expect(rows).to.be.an('array')
+      expect(rows[0].rideID).to.equal(59)
+      expect(rows[58].rideID).to.equal(1)
+    })
+
+    it('should return the first 5 rides with rideID sorted in Ascending order', async () => {
+      var paginationQueryParams = { limit: 5, offset: 0, column: 'rideID', sort: 'ASC' };
+
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+      const rides = response.body
+      const rows = rides.rows;
+
+      expect(rows).to.be.an('array')
+      expect(rows.length).to.equal(5)
+      expect(rows[0].rideID).to.equal(1)
+      expect(rows[1].rideID).to.equal(2)
+      expect(rows[2].rideID).to.equal(3)
+      expect(rows[3].rideID).to.equal(4)
+      expect(rows[4].rideID).to.equal(5)
+    })
+
+    it('should return list of 6 rides starting from rideID 11 to 16 since rideID is sorted in Ascending order', async () => {
+      var paginationQueryParams = { limit: 6, offset: 10, column: 'rideID', sort: 'ASC' };
+
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+      const rides = response.body
+      const rows = rides.rows;
+
+      expect(rows).to.be.an('array')
+      expect(rows.length).to.equal(6)
+      expect(rows[0].rideID).to.equal(11)
+      expect(rows[1].rideID).to.equal(12)
+      expect(rows[2].rideID).to.equal(13)
+      expect(rows[3].rideID).to.equal(14)
+      expect(rows[4].rideID).to.equal(15)
+      expect(rows[5].rideID).to.equal(16)
+    })
+
+    it('should return list of 6 rides starting from 49 to 44 since rideID is sorted in Descending order', async () => {
+      var paginationQueryParams = { limit: 6, offset: 10, column: 'rideID', sort: 'DESC' };
+
+      const response = await request(app).get('/rides').query(paginationQueryParams).expect(200)
+      const rides = response.body
+      const rows = rides.rows;
+
+      expect(rows).to.be.an('array')
+      expect(rows.length).to.equal(6)
+      expect(rows[0].rideID).to.equal(49)
+      expect(rows[1].rideID).to.equal(48)
+      expect(rows[2].rideID).to.equal(47)
+      expect(rows[3].rideID).to.equal(46)
+      expect(rows[4].rideID).to.equal(45)
+      expect(rows[5].rideID).to.equal(44)
+    })
+
+    it('should throw error 500 if there is something wrong with the database when retrieving list of rides', async () => {
+      const dbAllStub = sinon
+        .stub(db, 'all')
+        .yields(new Error('Database all method retrieve fake error'))
+
+      // expect the api call to return error 500
+      await request(app).get('/rides').expect(500)
+      dbAllStub.restore()
+    })
+
+    it('should return 500 if no rides found', async () => {
+      // Delete data in Rides table
+      db.all('DELETE FROM Rides', function (err, rows) {});
+
+      // expect the api call to return error 404
+      const response = await request(app)
+        .get('/rides')
+        .expect(500)
+
+      const errorResponse = response.body
+
+      expect(errorResponse).to.be.an('object')
+      expect(errorResponse.error_code).to.equal('RIDES_NOT_FOUND_ERROR')
+      expect(errorResponse.message).to.equal('Could not find any rides')
+    })
   })
+
 })
